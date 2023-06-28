@@ -1,0 +1,610 @@
+%Hartshorne - Algebraic Geometry (Form 9.0)
+
+%Documentclass
+
+\documentclass[a4paper,10pt,openany]{book}
+
+%Packages
+
+\usepackage{latexsym,amssymb}
+\usepackage[leqno]{amsmath}
+\usepackage{amsthm}
+\usepackage{kotex}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage{etoolbox}
+
+
+
+%Title
+
+\title{\Huge{Algebraic Geometry\\(대수기하학)}\\
+\LARGE{Version 1.0}}
+\author{\LARGE{\textsf{Author : Robin Hartshorne}}\\
+\LARGE{\textsf{Translated by Dyne}}}
+\date{\textrm{Aug 30, 2022}}
+
+
+
+\renewcommand{\thechapter}{\Roman{chapter}}
+\renewcommand{\thesection}{\arabic{section}}
+
+
+
+%Theorems
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]				%theorem
+\newtheorem{proposition}[theorem]{Proposition}		%proposition
+\newtheorem{propositiondef}[theorem]{Proposition-Definition}
+%\newenvironment{theorema}[1][]{\refstepcounter{theorem}\par\medskip
+%	\noindent \textbf{Theorem~\thetheorem A. #1} \rmfamily}{\medskip}
+\newenvironment{theorema}[1][]{\refstepcounter{theorem}\par\medskip
+	\noindent \textbf{Theorem~\thetheorem A\ifstrempty{#1}{}{ (#1)}.} \rmfamily}{\medskip}
+\newtheorem{corollary}[theorem]{Corollary}			%corollary
+\newtheorem*{definition}{Definition}					%definition
+\newtheorem{example}{Example}[theorem]				%example
+\newtheorem{caution}[example]{Caution}
+\newtheorem{lemma}[theorem]{Lemma}					%lemma
+\newtheorem*{lemma*}{Lemma}
+\newenvironment{propositiona}[1][]{\refstepcounter{theorem}\par\medskip
+	\noindent \textbf{Proposition~\thetheorem A\ifstrempty{#1}{}{ (#1)}.} \rmfamily}{\medskip}
+\newtheorem{remark}[example]{Remark}				%remark
+\newenvironment{remarka}[1][]{\refstepcounter{example}\par\medskip
+\noindent \textbf{Remark~\theexample #1A} \rmfamily}{\medskip}
+\newtheorem*{construction}{Construction}
+
+
+
+%Formats
+
+%%Watermark
+\usepackage{draftwatermark}
+\SetWatermarkText{Translated by Dyne}
+\SetWatermarkScale{2}
+\SetWatermarkLightness{.9}
+\makeatletter
+\def\watermarkoff{%
+	\@sc@wm@stampfalse
+}
+\makeatother 
+\makeatletter
+\def\watermarkon{%
+	\@sc@wm@stamptrue
+}
+\makeatother
+
+%%Chapter Format
+\usepackage[T1]{fontenc}
+\usepackage{titlesec, blindtext, color}
+\definecolor{gray75}{gray}{0.75}
+\newcommand{\hsp}{\hspace{20pt}}
+\titleformat{\chapter}[hang]{\LARGE\bfseries}%
+{\thechapter\hsp\textcolor{gray75}{|}\hsp}{0pt}{\LARGE\bfseries}
+
+%%Table of Contents
+\usepackage{titletoc}%
+\titlecontents{chapter}% <section-type>
+[0pt]% <left>
+{\bfseries}% <above-code>
+{\\\thecontentslabel.\hspace{1em}}% <numbered-entry-format>
+{}% <numberless-entry-format>
+{\hfill\contentspage}% <filler-page-format>
+
+%%Enumerate Format
+\usepackage{enumitem}
+\setlist[enumerate]{itemsep=-1mm,nosep,itemindent=-2.35mm}
+\newcommand\setItemnumber[1]{\setcounter{enumi}{\numexpr#1-1\relax}}
+
+%%Dual Letter
+\makeatletter
+\def\dual#1{\expandafter\dual@aux#1\@nil}
+\def\dual@aux#1/#2\@nil{\begin{tabular}[b]{@{}c@{}}#1\\#2\end{tabular}}
+\makeatother
+
+%%Dagger Footnote
+\newcounter{daggerfootnote}
+\newcommand*{\daggerfootnote}[1]{%
+	\setcounter{daggerfootnote}{\value{footnote}}%
+	\renewcommand*{\thefootnote}{\fnsymbol{footnote}}%
+	\footnote[2]{#1}%
+	\setcounter{footnote}{\value{daggerfootnote}}%
+	\renewcommand*{\thefootnote}{\arabic{footnote}}%
+}
+
+%%Bibliography Spacing
+\let\oldbibliography\thebibliography
+\renewcommand{\thebibliography}[1]{%
+	\oldbibliography{#1}%
+	\setlength{\itemsep}{0.6pt}}
+
+%%Align Tag Mode
+\makeatletter
+\newcommand{\leqnomode}{\tagsleft@true\let\veqno\@@leqno}
+\newcommand{\reqnomode}{\tagsleft@false\let\veqno\@@eqno}
+\makeatother
+
+
+%%ReDeclareMathOperator
+\makeatletter
+\newcommand\RedeclareMathOperator{%
+	\@ifstar{\def\rmo@s{m}\rmo@redeclare}{\def\rmo@s{o}\rmo@redeclare}%
+}
+% this is taken from \renew@command
+\newcommand\rmo@redeclare[2]{%
+	\begingroup \escapechar\m@ne\xdef\@gtempa{{\string#1}}\endgroup
+	\expandafter\@ifundefined\@gtempa
+	{\@latex@error{\noexpand#1undefined}\@ehc}%
+	\relax
+	\expandafter\rmo@declmathop\rmo@s{#1}{#2}}
+% This is just \@declmathop without \@ifdefinable
+\newcommand\rmo@declmathop[3]{%
+	\DeclareRobustCommand{#2}{\qopname\newmcodes@#1{#3}}%
+}
+\@onlypreamble\RedeclareMathOperator
+\makeatother
+
+
+
+
+%General
+
+\newcommand{\st}{\;\mrm{s.t.}\;}					%such that
+\newcommand{\for}{\;\mrm{for}\;}
+\newcommand{\rel}{\mrm{rel}}						%relatively
+\newcommand{\tf}{\therefore}
+\newcommand{\floor}[1]{\lfloor #1\rfloor}
+
+
+%Fonts
+
+%%Math Fonts
+
+\newcommand{\mb}[1]{\mathbb{#1}}					%blackboard font of math
+\newcommand{\mbf}[1]{\mathbf{#1}}					%bold font of math
+\newcommand{\mc}[1]{\mathcal{#1}}					%calligraphy font of math
+\newcommand{\mf}[1]{\mathfrak{#1}}					%mathfrak font
+\newcommand{\mi}[1]{\mathit{#1}}					%italic font of math
+\newcommand{\mrm}[1]{\mathrm{#1}}					%roman font of math
+\usepackage{mathrsfs}								%mathrsfs package, provides mathscr font
+\newcommand{\ms}[1]{\mathscr{#1}}					%mathscr font
+\newcommand{\msf}[1]{\mathsf{#1}}
+
+%\DeclareFontFamily{OT1}{pzc}{}
+%\DeclareFontShape{OT1}{pzc}{m}{it}{<-> s * [1.200] pzcmi7t}{}
+%\DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}	%mathpzc font
+%\usepackage{bm}									%bm Package, defines \bm
+
+\newcommand{\mtn}[1]{\text{\tn{#1}}}
+
+%%Text Fonts
+\newcommand{\tb}[1]{\textbf{#1}}					%bold font
+\newcommand{\ti}[1]{\textit{#1}}					%italic font
+\newcommand{\tn}[1]{\textnormal{#1}}				%normal font of text
+
+%%Font Size
+\newcommand{\ds}{\displaystyle}						%display style
+\newcommand{\scs}{\scriptstyle}						%script style
+\newcommand{\sss}{\scriptscriptstyle}				%script^2 style
+
+
+
+%Math Symbol
+
+%%Arrow
+
+\newcommand{\ra}{\rightarrow}						%right arrow
+\newcommand{\la}{\leftarrow}						%left arrow
+\newcommand{\lra}{\leftrightarrow}					%leftright arrow
+\newcommand{\Ra}{\Rightarrow}						%double right arrow
+\newcommand{\La}{\Leftarrow}						%double left arrow
+\newcommand{\Lra}{\Leftrightarrow}					%double leftright arrow
+\newcommand{\longra}{\longrightarrow}
+\newcommand{\hra}{\hookrightarrow}
+\usepackage{mathtools}
+\newcommand{\xhra}{\xhookrightarrow}
+
+%%Fraction
+\newcommand{\fra}[1]{\frac{1}{#1}}					%fraction whoes numerator is 1
+\newcommand{\sfra}[1]{\scalebox{1}{$\fra{#1}$}}
+\newcommand{\sfrac}[2]{\scalebox{1}{$\frac{#1}{#2}$}}
+\newcommand{\fp}{\fra{2\pi}}						%1/2\pi
+\newcommand{\fpn}{\left(\fp\right)^n}				%(1/2\pi)^n
+\newcommand{\fpi}{\fra{2\pi i}}						%1/2\pi i
+\newcommand{\fpin}{\left(\fpi\right)^n}				%(1/2\pi i)^n
+
+%%Quad
+\newcommand{\qrq}{\quad\ra\quad}
+\newcommand{\qlq}{\quad\la\quad}
+\newcommand{\qlrq}{\quad\lra\quad}
+\newcommand{\qRq}{\quad\Ra\quad}
+\newcommand{\qLq}{\quad\La\quad}
+\newcommand{\qLrq}{\quad\Lra\quad}
+\newcommand{\qcq}{\quad,\quad}
+\newcommand{\qoq}{\quad\mrm{or}\quad}
+\newcommand{\qnq}{\quad\mrm{and}\quad}
+\newcommand{\qsq}{\quad\mrm{s.t.}\quad}
+\newcommand{\qwq}{\quad\wedge\quad}
+\newcommand{\qvq}{\quad\vee\quad}
+
+
+%Fundamental Set
+
+\newcommand{\es}{\emptyset}							%empty set
+\newcommand{\N}{\mathbb N}							%natural numbers
+\newcommand{\Z}{\mathbb Z}							%integers
+\newcommand{\Zn}{\mathbb Z^n}
+\newcommand{\Q}{\mathbb Q}							%rational numbers
+\newcommand{\R}{\mathbb R}							%real numbers
+\newcommand{\Rn}{\mathbb R^n}						%R^n space
+\newcommand{\C}{\mathbb C}							%complex numbers
+\newcommand{\Cn}{\mathbb C^n}						%C^n space
+\newcommand{\Cno}{\mathring{\mathbb C}^n}			%C^n\circ
+\newcommand{\K}{\mathbb K}							%Typical Field
+
+
+
+%Set Theory
+
+\newcommand{\card}[1]{\mrm{card}\left(#1\right)}	%cardinality
+\newcommand{\bs}{\subset}							%subset
+\newcommand{\ps}{\supset}							%superset
+\newcommand{\bseq}{\subseteq}
+\newcommand{\bsneq}{\subsetneq}
+\newcommand{\pseq}{\supseteq}
+\newcommand{\psneq}{\supsetneq}
+\newcommand{\we}{\wedge}							%wedge
+\newcommand{\mt}{\mapsto}							%mapsto
+\newcommand{\ol}{\overline}							%overline
+\newcommand{\m}{\setminus}							%setminus
+\newcommand{\rest}{\!\upharpoonright\!}				%restriction
+\newcommand{\op}{^{\mrm{op}}}						%opposite
+\newcommand{\id}{\mrm{id}}							%identity function (lowercase)
+\newcommand{\Id}{\mrm{Id}}							%identity function (uppercase)
+\newcommand{\pr}{\mrm{pr}}							%Projection
+
+
+
+%Category Theory
+
+\newcommand{\Ob}{\mrm{Ob}}
+\newcommand{\cC}{\msf{CAT}}							%category of categories
+\newcommand{\cS}{\msf{Set}}							%category of sets
+\newcommand{\cT}{\msf{Top}}							%category of topological spaces
+\newcommand{\cM}{\msf{Mon}}							%category of monoids
+\newcommand{\cG}{\msf{Grp}}							%category of groups
+\newcommand{\cR}{\msf{Ring}}						%category of rings
+\newcommand{\Sch}[1]{\mf{Sch}(#1)}					%Category of Schemes
+\newcommand{\limra}{\varinjlim}						%Direct limit
+\newcommand{\limla}{\varprojlim}					%Inverse limit
+
+
+%Topology
+
+\newcommand{\inte}[1]{\mrm{int}\left(#1\right)}		%interior
+\newcommand{\cl}[1]{\mrm{cl}\left(#1\right)}		%closure
+\newcommand{\ext}[1]{\mrm{ext}\left(#1\right)}		%exterior
+\newcommand{\bdy}[1]{\mrm{bdy}\left(#1\right)}		%boundary
+\newcommand{\der}[1]{\mrm{der}\left(#1\right)}		%derived set
+
+
+
+%Geometry
+
+\newcommand{\Sn}{\mb S^n}							%n-Sphere
+\renewcommand{\P}{\mb P}							%Projective space
+\newcommand{\Pn}{\mb P^n}							%n-Projective space
+\newcommand{\T}{\mb T}
+\newcommand{\Tn}{\mb T^n}							%n-Torus
+\newcommand{\B}{\mb B}								%Ball
+\newcommand{\Bn}{\mb B^n}							%n-Ball
+\newcommand{\bB}{\bar{\mb B}}
+\newcommand{\bBn}{\bar{\mb B}^n}
+\newcommand{\Hn}{\mb H^n}
+\newcommand{\An}{\mb A^n}							%Affine n-space
+
+
+%Algebra
+
+\newcommand{\mul}{\:|\:}							%divide
+\newcommand{\tril}{\triangleleft}					%normal subgroup
+\newcommand{\trilneq}{\mathrel{\ooalign{$\lneq$\cr\raise.22ex\hbox{$\lhd$}\cr}}}	%proper normal subgroup
+\renewcommand{\mod}{\mrm{mod}\:}					%mod
+\newcommand{\norm}[2]{N_{#1}{}^{#2}}				%norm
+\newcommand{\tr}[2]{T_{#1}{}^{#2}}					%trace
+\newcommand{\trd}{\mrm{tr.d.}}						%transcendental dimension
+\newcommand{\trdeg}[2]{\mrm{tr.deg}_{\msf{#1}}{\msf{#2}}}
+\DeclareMathOperator{\sgn}{sgn}						%sign
+\DeclareMathOperator{\rank}{rank}					%rank of free modules
+\DeclareMathOperator{\Mat}{Mat}						%matrices
+\DeclareMathOperator{\Char}{char}					%character
+\DeclareMathOperator{\supp}{supp}					%support (lowercase)
+\DeclareMathOperator{\Supp}{Supp}						%support (uppercase)
+\DeclareMathOperator{\Tran}{Tran}
+\DeclareMathOperator{\Ad}{Ad}
+\DeclareMathOperator{\ad}{ad}
+\DeclareMathOperator{\Tan}{Tan}						%Tangent Space
+\DeclareMathOperator{\codim}{codim}
+\DeclareMathOperator{\nil}{nil}						%nilradical
+
+%%Morphisms
+\DeclareMathOperator{\Dom}{Dom}
+\DeclareMathOperator{\Ker}{Ker}
+\DeclareMathOperator{\Coker}{Coker}
+\DeclareMathOperator{\coker}{coker}
+\RedeclareMathOperator{\Im}{Im}
+\DeclareMathOperator{\im}{im}
+\DeclareMathOperator{\Coim}{Coim}
+\DeclareMathOperator{\coim}{coim}
+\DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\End}{End}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\Int}{Int}
+\newcommand{\Autx}[1]{\mrm{Aut}_{#1}}				%automorphism Group
+\newcommand{\Der}[3]{\mrm{Der}_{\msf{#1}}(\msf{#2},\msf{#3})}	%Derivations
+
+%%Diagram
+\usepackage{stackrel}								%enhance stackrel command
+\newcommand{\sr}[2]{\stackrel{#1}{#2}}				%stackrel
+\usepackage{tikz-cd}								%commutative diagram
+\newcommand{\arrow}{\arrow}							%arrow of tikzcd
+\tikzset{
+	symbol/.style={
+		draw=none,
+		every to/.append style={
+			edge node={node [sloped, allow upside down, auto=false]{$#1$}}}
+	}
+}
+
+%%Algebraic Geometry
+\newcommand{\etale}{\text{Sp\'e}}
+\newcommand{\hO}[1]{\hat{\mc O}_{#1}}
+\DeclareMathOperator{\Sing}{Sing}					%Set of Singular Points
+\DeclareMathOperator{\Ann}{Ann}
+\DeclareMathOperator{\Spec}{Spec}
+\DeclareMathOperator{\Proj}{Proj}
+
+%%Lie/Algebraic Groups
+\newcommand{\GL}{\mrm{GL}}
+\newcommand{\gl}{\mf{gl}}
+\newcommand{\SL}{\mrm{SL}}
+
+
+%Analysis
+
+\newcommand{\z}{\mf z}
+\newcommand{\zo}{\mf z_0}
+\newcommand{\rr}{\mrm r}
+\newcommand{\sps}[2]{#1^{(#2)}}						%superscript with parenthesis
+\newcommand{\ch}{\mrm{ch}}							%Cauchy integral
+\RedeclareMathOperator{\Re}{Re}						%Real Part
+\newcommand{\ind}{\mrm{Ind}}						%index of curve
+\newcommand{\res}[2]{\mrm{Res}\:(#1;\:#2)}			%residue
+\newcommand{\diam}[1]{\mrm{diam}\left(#1\right)}	%diameter
+\newcommand{\vol}[1]{\mrm{vol}\:\left(#1\right)}	%volume
+\newcommand{\co}{\overline{co}}						%closed convex hull
+\newcommand{\orth}{\:\bot\:}
+\DeclareMathOperator{\Vol}{Vol}
+\DeclareMathOperator{\Lip}{Lip}						%Lipschitz
+\DeclareMathOperator{\rad}{rad}						%radical
+\DeclareMathOperator{\grad}{grad}					%gradient
+\DeclareMathOperator{\dist}{dist}						%distance
+
+%%Absolutely Continuous
+\usepackage{pifont}
+\DeclareFontFamily{U}{matha}{\hyphenchar\font45}
+\DeclareFontShape{U}{matha}{m}{n}{
+	<-6> matha5 <6-7> matha6 <7-8> matha7
+	<8-9> matha8 <9-10> matha9
+	<10-12> matha10 <12-> matha12
+}{}
+\makeatletter
+\newcommand\Pimathsymbol[3][\mathord]{%
+	#1{\@Pimathsymbol{#2}{#3}}}
+\def\@Pimathsymbol#1#2{\mathchoice
+	{\@Pim@thsymbol{#1}{#2}\tf@size}
+	{\@Pim@thsymbol{#1}{#2}\tf@size}
+	{\@Pim@thsymbol{#1}{#2}\sf@size}
+	{\@Pim@thsymbol{#1}{#2}\ssf@size}}
+\def\@Pim@thsymbol#1#2#3{%
+	\mbox{\fontsize{#3}{#3}\Pisymbol{#1}{#2}}}
+\makeatother
+\newcommand{\newll}{\Pimathsymbol[\mathrel]{matha}{"CE}}
+
+%%Disc & Annulus
+\newcommand{\D}[2]{D\left(#1;\:#2\right)}			%open disc
+\newcommand{\Dp}[2]{D'\left(#1;\:#2\right)}			%punctured disc
+\newcommand{\bD}[2]{\bar D\left(#1;\:#2\right)}		%closed disc
+\newcommand{\bU}{\bar U}							%closed unit disc
+\newcommand{\A}[2]{A\left(#1,#2\right)}				%annulus
+
+%%Exponential
+\newcommand{\eita}{e^{i\theta}}						%exponential i theta
+\newcommand{\eiita}{e^{-i\theta}}					%exponential -i theta
+\newcommand{\einta}{e^{in\theta}}					%exponential in theta
+\newcommand{\eiinta}{e^{-in\theta}}					%exponential -in theta
+\newcommand{\eitx}{e^{itx}}							%exponential itx
+\newcommand{\eiitx}{e^{-itx}}						%exponential -itx
+\newcommand{\eitz}{e^{itz}}							%exponential itz
+\newcommand{\eiitz}{e^{-itz}}						%exponential -itz
+\newcommand{\epi}[2]{e^{2\pi i #1\cdot #2}}
+\newcommand{\empi}[2]{e^{-2\pi i #1\cdot #2}}
+
+%%Braket
+\usepackage{braket}									%braket package
+\newcommand{\bk}[1]{\Braket{#1}}					%braket
+
+%%Derivative
+\newcommand{\dif}[2]{\frac{d#1}{d#2}}				%derivative
+\newcommand{\dl}[3]{\left.\dif{#1}{#2}\right|_{#3}}
+\newcommand{\pa}{\partial}							%Cauchy-Riemann derivative symbol
+\newcommand{\bpa}{\bar\partial}						%complex conjugate derivative symbol
+\newcommand{\pdif}[2]{\frac{\pa#1}{\pa#2}}			%partial derivative
+\newcommand{\pdx}[2]{\pdif{#1}{x^{#2}}}
+\newcommand{\pdl}[3]{\left.\pdif{#1}{#2}\right|_{#3}}
+\newcommand{\pdxl}[3]{\left.\pdx{#1}{#2}\right|_{#3}}
+\newcommand{\tri}{\triangle}						%Laplacian
+
+%%Integral
+\newcommand{\intm}[2]{\int_{#1}#2\:d\mu}			%Lebesgue integral respect to measure \mu
+\newcommand{\intx}[4]{\int_{#1}^{#2}#3\:d#4}		%integral
+\newcommand{\intr}{\int_{-\infty}^{\infty}}			%integration over (-\infty,\infty)=\R
+\newcommand{\intrp}{\int_0^{\infty}}				%integration over (0,\infty)=\R^+
+\newcommand{\intt}{\int_{-\pi}^{\pi}}				%integration over (-\pi,\pi)=T
+\newcommand{\inttt}{\int_0^{2\pi}}					%integration over (0,2\pi)
+
+%%Limit
+\newcommand{\limn}{\lim_{n\ra\infty}}				%limit n goes to infinity
+\newcommand{\limN}{\lim_{N\ra\infty}}				%limit N goes to infinity
+\newcommand{\limm}{\lim_{m\ra\infty}}				%limit m goes to infinity
+\newcommand{\limi}{\lim_{i\ra\infty}}				%limit i goes to infinity
+\newcommand{\limj}{\lim_{j\ra\infty}}				%limit j goes to infinity
+\newcommand{\limsupn}{\limsup_{n\ra\infty}}			%limit supremum n goes to infinity
+\newcommand{\liminfn}{\liminf_{n\ra\infty}}			%limit infimum n goes to infinity
+\newcommand{\limr}{\lim_{r\ra 1}}					%limit r goes to 1
+
+
+%Matrix
+
+\newcommand{\arrtwo}[4]{\left(\begin{array}{cc}#1 & #2\\#3 & #4\end{array}\right)}
+\newcommand{\sqarrtwo}[4]{\left[\begin{array}{cc}#1 & #2\\#3 & #4\end{array}\right]}
+\newcommand{\sqbinom}[2]{\left[\begin{array}{c}#1\\#2\end{array}\right]}
+
+
+
+%Large Symbol
+
+%%Sum
+\newcommand{\sumn}{\sum_{n=1}^\infty}				%sum about n from 1 to infinity
+\newcommand{\sumN}{\sum_{n=0}^\infty}				%sum about n from 0 to infinity
+\newcommand{\sumi}{\sum_{i=1}^n}					%sum about i from 1 to n
+\newcommand{\sumii}{\sum_{i=1}^\infty}				%sum about i from 1 to infinity
+\newcommand{\sumx}[2]{\sum_{#1}^{#2}}				%sum about,from (#1) to (#2)
+\newcommand{\sumxi}[1]{\sum_{#1}^\infty}			%sum about,from (#1) to infinity
+\newcommand{\sumz}{\sum_{-\infty}^\infty}			%sum from -infinity to infinity
+\newcommand{\sumnu}{\ds{\sum_{\nu=0}^{\infty}}}		%sum about multis-index nu from 0 to infinity
+\newcommand{\sumiI}{\ds\sum_{i\in I}}
+
+%%Pi Product
+\newcommand{\prodn}{\prod_{n=1}^\infty}				%Pi product about n from 1 to infinity
+\newcommand{\prodi}{\prod_{i=1}^n}					%Pi product about i from 1 to n
+\newcommand{\prodii}{\prod_{i=1}^\infty}			%Pi product about i from 1 to infinity
+\newcommand{\prodx}[2]{\prod_{#1}^{#2}}				%Pi product about,from (#1) to (#2)
+\newcommand{\prodxi}[1]{\prod_{#1}^\infty}			%Pi product about,from (#1) to infinity
+\newcommand{\prodiI}{\ds\prod_{i\in I}}
+
+%%X Product
+\DeclareFontFamily{U}{mathx}{\hyphenchar\font45}
+\DeclareFontShape{U}{mathx}{m}{n}{
+	<5> <6> <7> <8> <9> <10>
+	<10.95> <12> <14.4> <17.28> <20.74> <24.88>
+	mathx10
+}{}
+\DeclareSymbolFont{mathx}{U}{mathx}{m}{n}
+\DeclareMathSymbol{\bigtimes}{1}{mathx}{"91}		%definition of big times symbol
+\newcommand{\X}{\bigtimes}							%big times symbol
+\newcommand{\Xn}{\bigtimes_{n=1}^\infty}			%X product about n from 1 to infinity
+\newcommand{\Xpi}{\bigtimes_{i=1}^n}				%X product about i from 1 to n
+\newcommand{\Xii}{\bigtimes_{i=1}^\infty}			%X product about i from 1 to infinity
+\newcommand{\Xx}[2]{\bigtimes_{#1}^{#2}}			%X product about,from (#1) to (#2)
+\newcommand{\Xxi}[1]{\bigtimes_{#1}^\infty}			%X product about,from (#1) to infinity
+
+%%Union
+\newcommand{\cupn}{\bigcup_{n=1}^\infty}			%union about n from 1 to infinity
+\newcommand{\cupi}{\bigcup_{i=1}^n}					%union about i from 1 to n
+\newcommand{\cupii}{\bigcup_{i=1}^\infty}			%union about i from 1 to infinity
+\newcommand{\cupx}[2]{\bigcup_{#1}^{#2}}			%union about,from (#1) to (#2)
+\newcommand{\cupxi}[1]{\bigcup_{#1}^\infty}			%union about,from (#1) to infinity
+
+%%Intersection
+\newcommand{\capn}{\bigcap_{n=1}^\infty}			%intersection about n from 1 to infinity
+\newcommand{\capi}{\bigcap_{i=1}^n}					%intersection about i from 1 to n
+\newcommand{\capii}{\bigcap_{i=1}^\infty}			%intersection about i from 1 to infinity
+\newcommand{\capx}[2]{\bigcap_{#1}^{#2}}			%intersection about,from (#1) to (#2)
+\newcommand{\capxi}[1]{\bigcap_{#1}^\infty}			%intersection about,from (#1) to infinity
+
+\newcommand{\We}{\bigwedge}							%Wedge product
+
+
+%Greek Letter
+
+%%Upper Case
+\newcommand{\Ga}{\Gamma}
+\newcommand{\De}{\Delta}
+\newcommand{\Ta}{\Theta}
+\newcommand{\Lm}{\Lambda}
+\newcommand{\Si}{\Sigma}
+\newcommand{\Ph}{\Phi}
+\newcommand{\Om}{\Omega}
+
+%%Lower Case
+\newcommand{\al}{\alpha}
+\newcommand{\be}{\beta}
+\newcommand{\ga}{\gamma}
+\newcommand{\de}{\delta}
+\newcommand{\ep}{\varepsilon}
+\newcommand{\ze}{\zeta}
+\newcommand{\ta}{\theta}
+\newcommand{\vta}{\vartheta}
+\newcommand{\io}{\iota}
+\newcommand{\ka}{\kappa}
+\newcommand{\lm}{\lambda}
+\newcommand{\rh}{\varrho}
+\newcommand{\si}{\sigma}
+\newcommand{\ph}{\varphi}
+\newcommand{\om}{\omega}
+
+
+
+%Characteristic
+\newcommand{\pf}{\tb{Proof.} }
+\newcommand{\sol}{\tn{\\}Sol) }
+\newcommand{\nlsol}{Sol) }
+\newcommand{\sx}[2]{\{#1:#2\}}							%set
+\newcommand{\Sx}[2]{\left\{#1:#2\right\}}				%large set
+%\newcommand{\qed}{$$\therefore\mrm{Q. E. D}$$}		%quod erat demonstrandum.
+\renewcommand{\rest}{|}
+
+
+\renewcommand{\sp}{\mrm{sp}}
+\newcommand{\shhom}{\ms H\!om}							%sheaf hom
+\DeclareMathOperator{\Div}{Div}							%group of Weil divisors
+\DeclareMathOperator{\Cl}{Cl}							%group of Weil divisors mod prime divisors
+\DeclareMathOperator{\CaCl}{CaCl}						%group of Cartier divisors mod prime divisors
+\DeclareMathOperator{\height}{ht}						%height of module
+\DeclareMathOperator{\Pic}{Pic}							%Picard group
+\DeclareMathOperator{\bSpec}{\mbf{Spec}}
+\DeclareMathOperator{\bProj}{\mbf{Proj}}
+\newcommand{\Otimes}{\bigotimes}
+\newcommand{\Oplus}{\bigoplus}
+\DeclareMathOperator{\length}{length}
+\renewcommand{\Der}[3]{\mrm{Der}_{#1}(#2,#3)}	%Derivations
+\DeclareMathOperator{\depth}{depth}
+\DeclareMathOperator{\gr}{gr}
+\newcommand{\Ab}{\mf{Ab}}								%Category of Abelian groups
+\newcommand{\Mod}{\mf{Mod}}								%Category of modules over ring
+\newcommand{\Qco}{\mf{Qco}}								%Category of quasi-coherent sheaves
+\newcommand{\Coh}{\mf{Coh}}								%Category of coherent sheaves
+
+
+
+
+\begin{document}
+	
+	
+	\watermarkoff\maketitle
+	
+	
+	\renewcommand\contentsname{Contents (목차)}
+	\tableofcontents
+	\newpage%\watermarkon
+	
+	\include{AG_ch_1}
+	\include{AG_ch_2}
+	\include{AG_ch_3}
+	\include{AG_Solution}
+	
+	
+	
+	
+\end{document}
